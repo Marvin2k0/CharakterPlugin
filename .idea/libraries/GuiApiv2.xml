@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="GuiApiv2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Server 1.12.2/plugins/GuiApiv2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="CharakterPlugin_by_Marvin2k0">
+    <output-path>$PROJECT_DIR$/../../Server 1.12.2/plugins</output-path>
+    <root id="archive" name="CharakterPlugin_by_Marvin2k0.jar">
+      <element id="module-output" name="CharakterPlugin" />
+    </root>
+  </artifact>
+</component>
