@@ -68,7 +68,18 @@ public class CharakterListener implements Listener
             else if (name.equals("§aBestätigen"))
             {
                 erstellung.remove(player);
+            }
+            else if (name == "§cAbbrechen (du wirst abgemeldet)")
+            {
+                if (erstellung.contains(player))
+                {
+                    erstellung.remove(player);
+                }
 
+                vorname.add(player);
+                player.closeInventory();
+                Bukkit.getPlayer(player.getUniqueId()).kickPlayer("§cDu hast dich abgemeldet");
+                vorname.remove(player);
             }
         }
     }

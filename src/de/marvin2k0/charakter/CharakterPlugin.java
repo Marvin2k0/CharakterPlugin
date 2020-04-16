@@ -116,6 +116,12 @@ public class CharakterPlugin extends JavaPlugin
         guiItemAlter.setItemMeta(itemMetaAlter);
         content.setItem(14, guiItemAlter);
 
+        GuiItem guiItemCancel = new GuiItem(GuiItem.GuiItemAction.CLOSE, Material.REDSTONE_BLOCK, 1, (short) 1);
+        ItemMeta guiItemCancelMeta = guiItemCancel.getItemMeta();
+        guiItemCancelMeta.setDisplayName("§cAbbrechen (du wirst abgemeldet)");
+        guiItemCancel.setItemMeta(guiItemCancelMeta);
+        content.setItem(18, guiItemCancel);
+
         Charakter c = getCharakter(player);
 
         if (!c.getVorname().isEmpty() && !c.getNachname().isEmpty() && c.getAlter() != 0)
