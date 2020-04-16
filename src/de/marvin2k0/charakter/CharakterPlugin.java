@@ -1,5 +1,6 @@
 package de.marvin2k0.charakter;
 
+import de.marvin2k0.charakter.commands.CharacterCommands;
 import de.marvin2k0.charakter.listeners.CharakterListener;
 import de.marvin2k0.guiapi.GuiApi;
 import de.marvin2k0.guiapi.GuiInventory;
@@ -18,10 +19,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class CharakterPlugin extends JavaPlugin
 {
     private static CharakterPlugin cp;
+    private CharakterListener cl = new CharakterListener();
+    public HashMap<Player, Charakter> characters = new HashMap<>();
 
     @Override
     public void onEnable()
@@ -32,31 +36,13 @@ public class CharakterPlugin extends JavaPlugin
         this.getConfig().options().copyDefaults(true);
         this.saveConfig();
 
-        this.getCommand("charakter").setExecutor(this);
+        this.getCommand("charakter").setExecutor(new CharacterCommands());
         this.getServer().getPluginManager().registerEvents(new CharakterListener(), this);
     }
 
     public static CharakterPlugin getCp()
     {
         return cp;
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
-    {
-        if (!(sender instanceof Player))
-        {
-            sender.sendMessage("§cNur fuer Spieler!");
-
-            return true;
-        }
-
-        Player player = (Player) sender;
-
-
-
-
-        return true;
     }
 
     public Charakter getCharakter(Player player)
@@ -81,7 +67,12 @@ public class CharakterPlugin extends JavaPlugin
 
     public boolean exists(String name)
     {
-        return this.getConfig().getStringList("names").contains(name);
+        for (String str : this.getConfig().getStringList("names"))
+        {
+            if (name.equals(str.split("_")[0]))
+                return true;
+        }
+        return false;
     }
 
     public void openCharakterInv(Player player)
@@ -98,31 +89,44 @@ public class CharakterPlugin extends JavaPlugin
             content.setItem(i, placeholder);
         }
 
-        GuiItem guiItemVorname = new GuiItem(GuiItem.GuiItemAction.CLOSE, !getCharakter(player).getVorname().isEmpty() ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
+        Charakter charakter;
+
+        if (characters.get(player) == null)
+        {
+            charakter = getCharakter(player);
+            System.out.println("istnull ");
+        }
+        else
+        {
+            charakter = characters.get(player);
+            System.out.println("ist nicht null");
+        }
+
+        GuiItem guiItemVorname = new GuiItem(GuiItem.GuiItemAction.CLOSE, !charakter.getVorname().isEmpty() ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
         ItemMeta itemMetaVorname = guiItemVorname.getItemMeta();
-        itemMetaVorname.setDisplayName((getCharakter(player).getVorname().isEmpty() ? "§7§oVorname" : "§9" + getCharakter(player).getVorname() + "-0-CLOSE"));
+        itemMetaVorname.setDisplayName((charakter.getVorname().isEmpty() ? "§7§oVorname§f" : "§7§oVorname§f §9" + charakter.getVorname() + "-0-CLOSE"));
         guiItemVorname.setItemMeta(itemMetaVorname);
         content.setItem(12, guiItemVorname);
 
-        GuiItem guiItemNachname = new GuiItem(GuiItem.GuiItemAction.CLOSE, !getCharakter(player).getNachname().isEmpty() ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
+        GuiItem guiItemNachname = new GuiItem(GuiItem.GuiItemAction.CLOSE, !charakter.getNachname().isEmpty() ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
         ItemMeta itemMetaNachname = guiItemNachname.getItemMeta();
-        itemMetaNachname.setDisplayName((getCharakter(player).getNachname().isEmpty() ? "§7§oNachname" : "§9" + getCharakter(player).getNachname() + "-0-CLOSE"));
+        itemMetaNachname.setDisplayName((charakter.getNachname().isEmpty() ? "§7§oNachname§f" : "§7§oNachname§f §9" + charakter.getNachname() + "-0-CLOSE"));
         guiItemNachname.setItemMeta(itemMetaNachname);
         content.setItem(13, guiItemNachname);
 
-        GuiItem guiItemAlter = new GuiItem(GuiItem.GuiItemAction.CLOSE, getCharakter(player).getAlter() != 0 ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
+        GuiItem guiItemAlter = new GuiItem(GuiItem.GuiItemAction.CLOSE, charakter.getAlter() != 0 ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
         ItemMeta itemMetaAlter = guiItemAlter.getItemMeta();
-        itemMetaAlter.setDisplayName((getCharakter(player).getAlter() == 0 ? "§7§oAlter" : "§9" + getCharakter(player).getAlter() + "-0-CLOSE"));
+        itemMetaAlter.setDisplayName((charakter.getAlter() == 0 ? "§7§oAlter§f" : "§7§oAlter§f §9" + charakter.getAlter() + "-0-CLOSE"));
         guiItemAlter.setItemMeta(itemMetaAlter);
         content.setItem(14, guiItemAlter);
 
         GuiItem guiItemCancel = new GuiItem(GuiItem.GuiItemAction.CLOSE, Material.REDSTONE_BLOCK, 1, (short) 1);
         ItemMeta guiItemCancelMeta = guiItemCancel.getItemMeta();
-        guiItemCancelMeta.setDisplayName("§cAbbrechen (du wirst abgemeldet)");
+        guiItemCancelMeta.setDisplayName("§cAbbrechen");
         guiItemCancel.setItemMeta(guiItemCancelMeta);
         content.setItem(18, guiItemCancel);
 
-        Charakter c = getCharakter(player);
+        Charakter c = charakter;
 
         if (!c.getVorname().isEmpty() && !c.getNachname().isEmpty() && c.getAlter() != 0)
         {

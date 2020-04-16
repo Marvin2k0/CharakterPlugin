@@ -2,7 +2,6 @@ package de.marvin2k0.charakter;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,8 +42,6 @@ public class Charakter
         {
             this.config.set("name", vorname + " " + nachname);
             this.name = this.config.getString("name");
-
-            saveConfig();
         }
     }
 
@@ -61,14 +58,11 @@ public class Charakter
 
         this.vorname = vorname;
         this.config.set("vorname", vorname);
-        saveConfig();
 
         if (!vorname.isEmpty() && !nachname.isEmpty())
         {
             this.config.set("name", vorname + " " + nachname);
             this.name = this.config.getString("name");
-
-            saveConfig();
         }
     }
 
@@ -85,14 +79,11 @@ public class Charakter
 
         this.nachname = nachname;
         this.config.set("nachname", nachname);
-        saveConfig();
 
         if (!vorname.isEmpty() && !nachname.isEmpty())
         {
             this.config.set("name", vorname + " " + nachname);
             this.name = this.config.getString("name");
-
-            saveConfig();
         }
     }
 
@@ -107,7 +98,6 @@ public class Charakter
     {
         this.alter = alter;
         this.config.set("alter", alter);
-        saveConfig();
     }
 
     public int getAlter()
@@ -123,7 +113,6 @@ public class Charakter
 
         this.herkunft = herkunft;
         this.config.set("herkunft", herkunft);
-        saveConfig();
     }
 
     public String getHerkunft()
@@ -138,7 +127,13 @@ public class Charakter
         return !getVorname().isEmpty() && getAlter() != 0 && !getNachname().isEmpty() && getVorname() != null && getNachname() != null;
     }
 
-    private void saveConfig()
+    @Override
+    public String toString()
+    {
+        return getVorname() + " " + getNachname() + " " + getAlter();
+    }
+
+    public void saveConfig()
     {
         try
         {
