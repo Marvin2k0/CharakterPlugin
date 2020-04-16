@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CharakterListener implements Listener
 {
@@ -67,7 +68,7 @@ public class CharakterListener implements Listener
             else if (name.equals("§aBestätigen"))
             {
                 erstellung.remove(player);
-                player.setDisplayName(CharakterPlugin.getCp().getCharakter(player).getName());
+
             }
         }
     }
@@ -89,11 +90,37 @@ public class CharakterListener implements Listener
 
         if (event.getInventory().getName().equals("§lDaten") && CharakterPlugin.getCp().getCharakter((Player) event.getPlayer()).isValid())
         {
-            erstellung.remove(event.getPlayer());
-            ((Player) event.getPlayer()).setDisplayName(CharakterPlugin.getCp().getCharakter((Player) event.getPlayer()).getName());
-        }
+            if (!CharakterPlugin.getCp().exists(CharakterPlugin.getCp().getCharakter((Player) event.getPlayer()).getName()))
+            {
+                erstellung.remove(event.getPlayer());
+                ((Player) event.getPlayer()).setDisplayName(CharakterPlugin.getCp().getCharakter((Player) event.getPlayer()).getName());
+                ((Player) event.getPlayer()).setPlayerListName(CharakterPlugin.getCp().getCharakter((Player) event.getPlayer()).getName());
+                ((Player) event.getPlayer()).sendMessage("§aWillkommen, §9" + CharakterPlugin.getCp().getCharakter((Player) event.getPlayer()).getName());
 
-        System.out.println("closed inventory" + event.getInventory().getName());
+                List<String> names = CharakterPlugin.getCp().getConfig().getStringList("names");
+                names.add(CharakterPlugin.getCp().getCharakter((Player) event.getPlayer()).getName());
+                CharakterPlugin.getCp().getConfig().set("names", names);
+
+                CharakterPlugin.getCp().saveConfig();
+            }
+            else
+            {
+                File file = new File(CharakterPlugin.getCp().getDataFolder().getPath() + "/chars/" + event.getPlayer().getUniqueId() + ".yml");
+                file.delete();
+
+                event.getPlayer().sendMessage("§cBitte wähle einen anderen Namen! Der Charakter existiert bereits!");
+
+                Bukkit.getScheduler().runTaskLater(CharakterPlugin.getCp(), new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        CharakterPlugin.getCp().openCharakterInv((Player) event.getPlayer());
+                    }
+                }, 5);
+
+            }
+        }
     }
 
     @EventHandler
@@ -111,15 +138,7 @@ public class CharakterListener implements Listener
 
         Charakter charakter = CharakterPlugin.getCp().getCharakter(player);
 
-        if (charakter.getAlter() != 0 && !charakter.getVorname().isEmpty() && !charakter.getNachname().isEmpty())
-        {
-            player.sendMessage("Hallo, " + charakter.getName());
-            player.setDisplayName(charakter.getName());
-
-            return;
-        }
-
-        if (!player.hasPlayedBefore())
+        if (!charakter.isValid())
         {
             Bukkit.getScheduler().runTaskLater(CharakterPlugin.getCp(), new Runnable()
             {
@@ -132,6 +151,17 @@ public class CharakterListener implements Listener
                         erstellung.add(player);
                 }
             }, 5);
+
+            return;
+        }
+
+        if (charakter.getAlter() != 0 && !charakter.getVorname().isEmpty() && !charakter.getNachname().isEmpty())
+        {
+            player.sendMessage("Hallo, " + charakter.getName());
+            player.setDisplayName(charakter.getName());
+            player.setPlayerListName(charakter.getName());
+
+            return;
         }
     }
 

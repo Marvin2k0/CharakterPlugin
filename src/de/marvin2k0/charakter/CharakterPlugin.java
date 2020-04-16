@@ -79,6 +79,11 @@ public class CharakterPlugin extends JavaPlugin
         return charakter;
     }
 
+    public boolean exists(String name)
+    {
+        return this.getConfig().getStringList("names").contains(name);
+    }
+
     public void openCharakterInv(Player player)
     {
         Inventory content = Bukkit.createInventory(null, 3 * 9, "§lDaten");
@@ -93,23 +98,23 @@ public class CharakterPlugin extends JavaPlugin
             content.setItem(i, placeholder);
         }
 
-        GuiItem guiItemVorname = new GuiItem(GuiItem.GuiItemAction.CLOSE, Material.PAPER, 1, (short) 0);
+        GuiItem guiItemVorname = new GuiItem(GuiItem.GuiItemAction.CLOSE, !getCharakter(player).getVorname().isEmpty() ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
         ItemMeta itemMetaVorname = guiItemVorname.getItemMeta();
         itemMetaVorname.setDisplayName((getCharakter(player).getVorname().isEmpty() ? "§7§oVorname" : "§9" + getCharakter(player).getVorname() + "-0-CLOSE"));
         guiItemVorname.setItemMeta(itemMetaVorname);
-        content.setItem(11, guiItemVorname);
+        content.setItem(12, guiItemVorname);
 
-        GuiItem guiItemNachname = new GuiItem(GuiItem.GuiItemAction.CLOSE, Material.PAPER, 1, (short) 0);
+        GuiItem guiItemNachname = new GuiItem(GuiItem.GuiItemAction.CLOSE, !getCharakter(player).getNachname().isEmpty() ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
         ItemMeta itemMetaNachname = guiItemNachname.getItemMeta();
         itemMetaNachname.setDisplayName((getCharakter(player).getNachname().isEmpty() ? "§7§oNachname" : "§9" + getCharakter(player).getNachname() + "-0-CLOSE"));
         guiItemNachname.setItemMeta(itemMetaNachname);
-        content.setItem(12, guiItemNachname);
+        content.setItem(13, guiItemNachname);
 
-        GuiItem guiItemAlter = new GuiItem(GuiItem.GuiItemAction.CLOSE, Material.PAPER, 1, (short) 0);
+        GuiItem guiItemAlter = new GuiItem(GuiItem.GuiItemAction.CLOSE, getCharakter(player).getAlter() != 0 ? Material.EMPTY_MAP : Material.PAPER, 1, (short) 0);
         ItemMeta itemMetaAlter = guiItemAlter.getItemMeta();
         itemMetaAlter.setDisplayName((getCharakter(player).getAlter() == 0 ? "§7§oAlter" : "§9" + getCharakter(player).getAlter() + "-0-CLOSE"));
         guiItemAlter.setItemMeta(itemMetaAlter);
-        content.setItem(13, guiItemAlter);
+        content.setItem(14, guiItemAlter);
 
         Charakter c = getCharakter(player);
 
@@ -121,6 +126,15 @@ public class CharakterPlugin extends JavaPlugin
             guiItemBestätigen.setItemMeta(itemMetaBestätigen);
             content.setItem(26, guiItemBestätigen);
         }
+        else
+        {
+            GuiItem guiItemBestätigen = new GuiItem(GuiItem.GuiItemAction.CLOSE, Material.STONE, 1, (short) 0);
+            ItemMeta itemMetaBestätigen = guiItemBestätigen.getItemMeta();
+            itemMetaBestätigen.setDisplayName("§7§oBestätigen");
+            guiItemBestätigen.setItemMeta(itemMetaBestätigen);
+            content.setItem(26, guiItemBestätigen);
+        }
+
 
         GuiInventory gui = GuiInventory.createInventory(content);
 

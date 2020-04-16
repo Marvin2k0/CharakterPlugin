@@ -57,6 +57,8 @@ public class Charakter
 
     public void setVorname(String vorname)
     {
+        vorname = vorname.replace("§", "");
+
         this.vorname = vorname;
         this.config.set("vorname", vorname);
         saveConfig();
@@ -79,6 +81,8 @@ public class Charakter
 
     public void setNachname(String nachname)
     {
+        nachname = nachname.replace("§", "");
+
         this.nachname = nachname;
         this.config.set("nachname", nachname);
         saveConfig();
@@ -115,6 +119,8 @@ public class Charakter
 
     public void setHerkunft(String herkunft)
     {
+        herkunft = herkunft.replace("§", "");
+
         this.herkunft = herkunft;
         this.config.set("herkunft", herkunft);
         saveConfig();
@@ -129,7 +135,7 @@ public class Charakter
 
     public boolean isValid()
     {
-        return !getVorname().isEmpty() && getAlter() != 0 && !getNachname().isEmpty();
+        return !getVorname().isEmpty() && getAlter() != 0 && !getNachname().isEmpty() && getVorname() != null && getNachname() != null;
     }
 
     private void saveConfig()
